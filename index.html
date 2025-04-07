@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducing TravelEase</title>
+    <link rel="icon" href="/images/logo-bus.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Icon Library (FontAwesome) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<style>
+    
+
+    @keyframes busBrake {
+        0% {
+            transform: translateX(0) scale(1);
+            color: inherit;
+        }
+        30% {
+            transform: translateX(20px) scale(1.05);
+            color: #f59e0b;
+        }
+        60% {
+            transform: translateX(-15px) scale(0.98);
+            color: #ba1d1d;
+        }
+        80% {
+            transform: translateX(5px) scale(1.01);
+        }
+        100% {
+            transform: translateX(0) scale(1);
+            color: white;
+        }
+    }
+    
+    .bus-brake {
+        animation: busBrake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    
+    .bus-icon {
+        display: inline-block;
+        animation: shake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-3px); }
+        40%, 80% { transform: translateX(3px); }
+    }
+</style>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 shadow-lg sticky top-0 z-50 ">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo/Ikon -->
+                <div class="flex items-center">
+                    <i class="fas fa-bus text-white text-2xl"></i>
+                    <span class="text-white text-xl font-semibold ml-2 md:mr-4">TravelEase</span>
+                </div>
+                
+                <!-- Desktop Navigation (hidden on mobile) -->
+                <div class="hidden md:flex space-x-6 text-lg font-medium py-7">
+                    <a href="index.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg box-shadow shadow-xl   font-medium hover:bg-indigo-300 transition duration-300"><i class=" fa-solid fa-house"></i> Home</a>
+                    <a href="order.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg box-shadow shadow-xl   font-medium hover:bg-indigo-300 transition duration-300"><i class=" fa-solid fa-ticket"></i> Order</a>
+                    <a href="faq.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg box-shadow shadow-xl   font-medium hover:bg-indigo-300 transition duration-300"><i class=" fa-solid fa-question"></i> FAQ</a>
+                    <a href="service.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg box-shadow shadow-xl   font-medium hover:bg-indigo-300 transition duration-300"><i class=" fa-solid fa-headset"></i> Bantuan/Services</a>
+                    <a href="game.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg box-shadow shadow-xl   font-medium hover:bg-indigo-300 transition duration-300"><i class=" fa-solid fa-gamepad"></i> Game</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu (hidden by default) -->
+            <div id="mobile-menu" class="md:hidden hidden bg-blue-700 mt-2 pb-2">
+                <a href="index.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="order.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-ticket"></i> Order</a>
+                <a href="faq.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-question"></i> FAQ</a>
+                <a href="service.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-headset"></i> Bantuan/Services</a>
+                <a href="game.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-gamepad"></i> Game </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+     
+    
+    
+    <section class="bg-blue-600">
+
+        <div class="py-56 h-full max-h-1/4  bg-opacity-0 p-8 shadow-lg text-center">
+            <h1 id="welcome-text" class="text-6xl font-bold  mb-4 text-white inline-block">
+                Selamat Datang di TravelEase
+                <span class="bus-icon ml-2">🚌</span>
+            </h1>
+            
+            <p class="text-white mb-8">Solusi terbaik untuk pemesanan tiket bus online.</p>
+            
+            <a href="order.html" class="px-6 py-3 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-300 transition duration-300">
+                Mulai Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- Pengenalan Web -->
+    <div data-aos="fade-up" data-aos-duration="1200" class="container mx-auto px-4 py-16">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold mb-4">Tentang TravelEase</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                TravelEase adalah platform pemesanan tiket bus online yang memudahkan Anda untuk merencanakan perjalanan dengan cepat dan aman. Dengan berbagai fitur unggulan, kami hadir untuk memberikan pengalaman perjalanan yang nyaman dan menyenangkan.
+            </p>
+        </div>
+    </div>
+
+    <!-- Fitur Unggulan -->
+    <div class="bg-white py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Fitur Unggulan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Fitur 1 -->
+                <div class="text-center" data-aos="fade-up" data-aos-duration="1200" >
+                    <i class="fas fa-ticket-alt text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Pesan Tiket Online</h3>
+                    <p class="text-gray-600">Pesan tiket bus kapan saja dan di mana saja dengan mudah.</p>
+                </div>
+                <!-- Fitur 2 -->
+                <div class="text-center" data-aos="fade-up" data-aos-duration="1200">
+                    <i class="fas fa-map-marked-alt text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Rute Lengkap</h3>
+                    <p class="text-gray-600">Temukan berbagai rute perjalanan bus di seluruh Indonesia.</p>
+                </div>
+                <!-- Fitur 3 -->
+                <div class="text-center" data-aos="fade-up" data-aos-duration="1200">
+                    <i class="fas fa-headset text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Layanan Pelanggan 24/7</h3>
+                    <p class="text-gray-600">Tim kami siap membantu Anda kapan pun dibutuhkan.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kontak -->
+    <div class="bg-gray-100 py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Hubungi Kami</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Email -->
+                <div class="text-center">
+                    <i class="fas fa-envelope text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Email</h3>
+                    <p class="text-gray-600">support@travelease.com</p>
+                </div>
+                <!-- Telepon -->
+                <div class="text-center">
+                    <i class="fas fa-phone-alt text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Telepon</h3>
+                    <p class="text-gray-600">+62 123 4567 890</p>
+                </div>
+                <!-- Media Sosial -->
+                <div class="text-center">
+                    <i class="fas fa-share-alt text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Media Sosial</h3>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-blue-600 hover:text-blue-700"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-700"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-700"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lokasi -->
+<div class="bg-white py-8 md:py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">Lokasi Kami</h2>
+        <div class="relative overflow-hidden pb-[56.25%] md:pb-[50%]"> <!-- Aspect ratio 16:9 (mobile) dan 2:1 (desktop) -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3112.7335930432273!2d110.8203511531587!3d-7.593894388296913!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a16118646a631%3A0x53f3363763dd5046!2sJl.%20Soediro%2C%20Joyotakan%2C%20Kec.%20Serengan%2C%20Kota%20Surakarta%2C%20Jawa%20Tengah%2057157!5e0!3m2!1sid!2sid!4v1742730370892!5m2!1sid!2sid" 
+                class="absolute top-0 left-0 w-full h-full border-0"
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+        <div class="mt-4 text-center text-gray-600">
+            <p class="text-sm md:text-base">Jl. Soediro, Joyotakan, Kec. Serengan, Kota Surakarta, Jawa Tengah 57157</p>
+        </div>
+    </div>
+</div>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2023 TravelEase. All rights reserved.</p>
+            <div class="flex justify-center gap-3">
+
+                <p class="text-sm hover:underline"><a href=""><i class="fa-brands fa-youtube"></i> YouTube</a></p>
+                <p class="text-sm hover:underline"><a href=""><i class="fa-brands fa-tiktok"></i> Tiktok</a></p>
+                <p class="text-sm hover:underline"> <a href=""><i class="fa-brands fa-facebook-f"></i> Facebook</a></p>
+                <p class="text-sm hover:underline"> <a href=""><i class="fa-brands fa-linkedin"></i> Linkedin</a></p>
+            </div>
+        </div>
+    </footer>
+    <script>
+         // Trigger animasi saat halaman dimuat
+         document.addEventListener('DOMContentLoaded', function() {
+            const welcomeText = document.getElementById('welcome-text');
+            
+            // Animasi pertama saat load
+            welcomeText.classList.add('bus-brake');
+            
+            // Set timeout untuk mengulang animasi setiap 5 detik
+            setInterval(() => {
+                welcomeText.classList.remove('bus-brake');
+                // Trigger reflow
+                void welcomeText.offsetWidth;
+                welcomeText.classList.add('bus-brake');
+            }, 8000);
+        });
+    </script>
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            
+            // Change icon between bars and times
+            const icon = mobileMenuButton.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>   
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Klik Target dengan Hadiah</title>
+    <link rel="icon" href="/images/logo-bus.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .target {
+            transition: all 0.3s ease;
+        }
+        #game-area {
+            position: relative;
+            overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .badge {
+            animation: bounce 0.5s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(var(--fall-distance)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-blue-600 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center py-3">
+                    <i class="fas fa-bus text-white text-2xl"></i>
+                    <span class="text-white text-xl font-semibold ml-2 md:mr-4">TravelEase</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-6 text-lg font-medium py-10">
+                    <a href="index.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-house mr-1"></i> Home</a>
+                    <a href="order.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-ticket mr-1"></i> Order</a>
+                    <a href="faq.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-question mr-1"></i> FAQ</a>
+                    <a href="service.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-headset mr-1"></i> Bantuan/Services</a>
+                    <a href="game.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-gamepad mr-1"></i> Game</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none py-5 px-2">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden text-lg font-medium bg-blue-700">
+                <a href="index.html" class="block py-3 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-house mr-2"></i> Home</a>
+                <a href="order.html" class="block py-3 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-ticket mr-2"></i> Order</a>
+                <a href="faq.html" class="block py-3 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-question mr-2"></i> FAQ</a>
+                <a href="service.html" class="block py-3 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-headset mr-2"></i> Bantuan/Services</a>
+                <a href="game.html" class="block py-3 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-gamepad mr-2"></i> Game</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Game Header -->
+            <div class="bg-indigo-600 p-4 md:p-6 text-white">
+                <h1 class="text-2xl md:text-3xl font-bold text-center">Game Klik Target</h1>
+                <div class="flex flex-wrap justify-between items-center mt-4 gap-2">
+                    <div class="text-base md:text-xl">
+                        Skor: <span id="score" class="font-bold">0</span>
+                    </div>
+                    <div class="text-base md:text-xl">
+                        Target: <span id="target-score" class="font-bold">15</span>
+                    </div>
+                    <div class="text-base md:text-xl">
+                        Waktu: <span id="time" class="font-bold">30</span>s
+                    </div>
+                    <button id="start-btn" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition text-sm md:text-base">
+                        Mulai Game
+                    </button>
+                </div>
+            </div>
+    
+            <!-- Game Area -->
+            <div id="game-area" class="h-64 md:h-96 bg-gray-50 relative border-t border-gray-200">
+                <div id="target" class="target absolute w-12 h-12 md:w-16 md:h-16 bg-red-500 rounded-full cursor-pointer hidden flex items-center justify-center text-white font-bold shadow-lg hover:bg-red-600"></div>
+                
+                <!-- Game Over Screen -->
+                <div id="game-over" class="hidden absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center text-white p-4">
+                    <h2 class="text-2xl md:text-4xl font-bold mb-4 text-center">Game Selesai!</h2>
+                    <p class="text-xl md:text-2xl mb-2">Skor akhir: <span id="final-score" class="text-yellow-300">0</span></p>
+                    <p id="reward-message" class="text-lg md:text-xl text-green-300 mb-6 hidden text-center">🎉 Kamu mendapatkan hadiah!</p>
+                    <div id="badge-container" class="hidden mb-4">
+                        <div class="badge text-5xl">🏆</div>
+                    </div>
+                    <button id="restart-btn" class="bg-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        Main Lagi
+                    </button>
+                </div>
+    
+                <!-- Reward Screen -->
+                <div id="reward-screen" class="hidden absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center text-white p-4">
+                    <h2 class="text-2xl md:text-4xl font-bold mb-4 text-yellow-300 text-center">Selamat!</h2>
+                    <p class="text-xl md:text-2xl mb-2 text-center">Kamu mencapai target skor!</p>
+                    <div class="bg-white text-indigo-600 p-4 md:p-6 rounded-lg shadow-lg text-center max-w-xs md:max-w-sm mb-6">
+                        <h3 class="text-xl md:text-2xl font-bold mb-2">🎁 Hadiah Kamu</h3>
+                        <p class="text-base md:text-lg">Kamu mendapatkan badge spesial!</p>
+                        <div class="mt-4 text-5xl badge">🏆</div>
+                        <p class="mt-4 text-xs md:text-sm text-gray-500">Lanjutkan untuk mendapatkan skor lebih tinggi!</p>
+                    </div>
+                    <button id="continue-btn" class="bg-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        Lanjutkan
+                    </button>
+                </div>
+            </div>
+    
+            <!-- Game Instructions -->
+            <div class="bg-gray-100 p-4">
+                <h3 class="font-semibold text-lg mb-2">Cara bermain:</h3>
+                <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                    <li>Klik target merah untuk mendapatkan poin</li>
+                    <li>Setiap target memberi 1 poin</li>
+                    <li>Capai <span class="font-bold">15 poin</span> untuk mendapatkan hadiah!</li>
+                    <li>Target akan bergerak lebih cepat seiring skor bertambah</li>
+                    <li>Waktu bermain 30 detik</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-3">&copy; 2023 TravelEase. All rights reserved.</p>
+            <div class="flex justify-center gap-3 flex-wrap">
+                <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-youtube mr-1"></i> YouTube</a>
+                <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-tiktok mr-1"></i> Tiktok</a>
+                <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-facebook-f mr-1"></i> Facebook</a>
+                <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-linkedin mr-1"></i> Linkedin</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Game Variables
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval;
+        let timeInterval;
+        let speed = 1500;
+        let gameActive = false;
+        const TARGET_SCORE = 15;
+        let rewardAchieved = false;
+
+        // DOM Elements
+        const target = document.getElementById('target');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const targetScoreDisplay = document.getElementById('target-score');
+        const startBtn = document.getElementById('start-btn');
+        const gameOverScreen = document.getElementById('game-over');
+        const rewardScreen = document.getElementById('reward-screen');
+        const rewardMessage = document.getElementById('reward-message');
+        const badgeContainer = document.getElementById('badge-container');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const restartBtn = document.getElementById('restart-btn');
+        const continueBtn = document.getElementById('continue-btn');
+        const gameArea = document.getElementById('game-area');
+
+        // Create Confetti Effect
+        function createConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
+            const fallDistance = gameArea.clientHeight + 10;
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = -10 + 'px';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = confetti.style.width;
+                confetti.style.setProperty('--fall-distance', `${fallDistance}px`);
+                confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                gameArea.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Target Click Handler
+        target.addEventListener('click', () => {
+            if (!gameActive) return;
+            
+            score++;
+            scoreDisplay.textContent = score;
+            speed = Math.max(300, 1500 - (score * 20));
+            
+            target.classList.add('hidden', 'scale-90');
+            setTimeout(() => {
+                target.classList.remove('scale-90');
+            }, 100);
+            
+            if (score >= TARGET_SCORE && !rewardAchieved) {
+                rewardAchieved = true;
+                showReward();
+            }
+        });
+
+        // Move Target to Random Position
+        function moveTarget() {
+            if (!gameActive) return;
+            
+            const gameWidth = gameArea.clientWidth - target.clientWidth;
+            const gameHeight = gameArea.clientHeight - target.clientHeight;
+            
+            const randomX = Math.floor(Math.random() * gameWidth);
+            const randomY = Math.floor(Math.random() * gameHeight);
+            
+            target.style.left = `${randomX}px`;
+            target.style.top = `${randomY}px`;
+            target.classList.remove('hidden');
+            
+            setTimeout(moveTarget, speed);
+        }
+
+        // Show Reward Screen
+        function showReward() {
+            gameActive = false;
+            clearInterval(timeInterval);
+            target.classList.add('hidden');
+            createConfetti();
+            rewardScreen.classList.remove('hidden');
+        }
+
+        // Start Game Function
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            speed = 1500;
+            gameActive = true;
+            rewardAchieved = false;
+            
+            scoreDisplay.textContent = score;
+            timeDisplay.textContent = timeLeft;
+            
+            startBtn.disabled = true;
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            gameOverScreen.classList.add('hidden');
+            rewardScreen.classList.add('hidden');
+            rewardMessage.classList.add('hidden');
+            badgeContainer.classList.add('hidden');
+            
+            timeInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+            
+            moveTarget();
+        }
+
+        // End Game Function
+        function endGame() {
+            gameActive = false;
+            clearInterval(timeInterval);
+            target.classList.add('hidden');
+            
+            finalScoreDisplay.textContent = score;
+            
+            if (rewardAchieved) {
+                rewardMessage.classList.remove('hidden');
+                badgeContainer.classList.remove('hidden');
+            }
+            
+            gameOverScreen.classList.remove('hidden');
+            startBtn.disabled = false;
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        continueBtn.addEventListener('click', () => {
+            rewardScreen.classList.add('hidden');
+            gameActive = true;
+            moveTarget();
+        });
+
+        // Initialize Target Score Display
+        targetScoreDisplay.textContent = TARGET_SCORE;
+
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuButton.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    </script>
+</body>
+</html>

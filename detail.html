@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Perjalanan Bus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/images/logo-bus.png">
+    <!-- Icon Library (FontAwesome) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Barcode Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        /* Tambahkan di bagian style */
+@media (max-width: 767px) {
+    .mobile-menu {
+        transition: all 0.3s ease;
+    }
+    
+    #mobile-menu a {
+        display: flex;
+        align-items: center;
+    }
+    
+    #mobile-menu a i {
+        width: 24px;
+        text-align: center;
+    }
+}
+
+    /* Animasi untuk menu mobile */
+    #mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    }
+
+    #mobile-menu:not(.hidden) {
+    max-height: 500px; /* Sesuaikan dengan tinggi menu */
+    transition: max-height 0.3s ease-in;
+    }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .payment-method {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .payment-option {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .payment-option.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        
+        .payment-option i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        #ticketImage {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        #barcode {
+            width: 100%;
+            height: 80px;
+            margin: 15px 0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ddd;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+        }
+        
+        .step-circle.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background-color: #ddd;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo/Ikon -->
+                <div class="flex items-center">
+                    <i class="fas fa-bus text-white text-2xl"></i>
+                    <span class="text-white text-xl font-semibold ml-2 md:mr-5">TravelEase</span>
+                </div>
+                
+                <!-- Desktop Navigation (hidden on mobile) -->
+                <div class="hidden md:flex space-x-6  text-lg font-medium py-7">
+                    <a href="index.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-house"></i> Home</a>
+                    <a href="order.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-ticket"></i> Order</a>
+                    <a href="faq.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-question"></i> FAQ</a>
+                    <a href="service.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-headset"></i> Bantuan/Services</a>
+                    <a href="game.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-gamepad"></i> Game</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu (hidden by default) -->
+            <div id="mobile-menu" class="md:hidden hidden bg-blue-700 mt-2 pb-2">
+                <a href="index.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="order.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-ticket"></i> Order</a>
+                <a href="faq.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-question"></i> FAQ</a>
+                <a href="service.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-headset"></i> Bantuan/Services</a>
+                <a href="game.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-gamepad"></i> Game</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Detail Perjalanan -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <!-- Gambar Bus -->
+            <div class="w-full h-64 overflow-hidden">
+                <img src="https://images.contentstack.io/v3/assets/blt00454ccee8f8fe6b/blt7f86b6cf7e72ffe7/61bc491f85b59c201581b414/US_Bandung_ID_Header.jpg?im_w=720&width=720&quality=70&auto=webp" alt="Bus Image" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Informasi Perjalanan -->
+            <div class="p-6">
+                <h1 class="text-3xl font-bold mb-4">Jakarta - Bandung</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Detail Perjalanan -->
+                    <div>
+                        <h2 class="text-xl font-semibold mb-2">Detail Perjalanan</h2>
+                        <ul class="text-gray-600">
+                            <li class="mb-2"><i class="fas fa-calendar-alt mr-2"></i>Tanggal: 25 Oktober 2023</li>
+                            <li class="mb-2"><i class="fas fa-clock mr-2"></i>Berangkat: 08:00</li>
+                            <li class="mb-2"><i class="fas fa-clock mr-2"></i>Tiba: 12:00</li>
+                            <li class="mb-2"><i class="fas fa-chair mr-2"></i>Kursi Tersedia: 20</li>
+                            <li class="mb-2"><i class="fas fa-bus mr-2"></i>Tipe Bus: AC Executive</li>
+                        </ul>
+                    </div>
+
+                    <!-- Fasilitas -->
+                    <div>
+                        <h2 class="text-xl font-semibold mb-2">Fasilitas</h2>
+                        <ul class="text-gray-600">
+                            <li class="mb-2"><i class="fas fa-wifi mr-2"></i>WiFi Gratis</li>
+                            <li class="mb-2"><i class="fas fa-tv mr-2"></i>TV Layar Sentuh</li>
+                            <li class="mb-2"><i class="fas fa-snowflake mr-2"></i>AC</li>
+                            <li class="mb-2"><i class="fas fa-utensils mr-2"></i>Makanan Ringan</li>
+                            <li class="mb-2"><i class="fas fa-plug mr-2"></i>Stop Kontak</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Opsi Jumlah Kursi -->
+                <div class="mt-6 border-t pt-6">
+                    <h2 class="text-xl font-semibold mb-4">Pesan Kursi</h2>
+                    <div class="flex justify-end items-center space-x-4">
+                        <button onclick="decrementSeat()" class="bg-gray-200 text-gray-700 w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-300">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input 
+                            type="number" 
+                            id="seatCount" 
+                            value="1" 
+                            min="1" 
+                            max="20" 
+                            class="w-20 text-center border border-gray-300 rounded-lg py-2 px-4"
+                            readonly
+                        >
+                        <button onclick="incrementSeat()" class="bg-gray-200 text-gray-700 w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-300">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Harga dan Tombol Pesan -->
+                <div class="mt-6 border-t pt-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-600">Harga per orang:</p>
+                            <p class="text-2xl font-bold text-blue-600">Rp 150.000</p>
+                            <p class="text-gray-600 mt-2">Total Harga: <span id="totalPrice" class="font-semibold">Rp 150.000</span></p>
+                        </div>
+                        <button id="orderBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-ticket-alt mr-2"></i>Pesan Sekarang
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            
+            <div class="step-indicator">
+                <div class="step-circle active">1</div>
+                <div class="step-line"></div>
+                <div class="step-circle">2</div>
+                <div class="step-line"></div>
+                <div class="step-circle">3</div>
+            </div>
+            
+            <!-- Step 1: Ringkasan Pemesanan -->
+            <div id="step1" class="step active">
+                <h2 class="text-2xl font-bold mb-4">Ringkasan Pemesanan</h2>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                    <p class="font-semibold text-lg">Jakarta - Bandung</p>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <p><i class="fas fa-calendar-alt mr-2"></i>25 Oktober 2023</p>
+                        <p><i class="fas fa-clock mr-2"></i>08:00 - 12:00</p>
+                        <p><i class="fas fa-chair mr-2"></i><span id="summarySeats">1</span> Kursi</p>
+                        <p><i class="fas fa-bus mr-2"></i>AC Executive</p>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-blue-200">
+                        <p class="font-bold">Total Pembayaran: <span id="summaryTotal">Rp 150.000</span></p>
+                    </div>
+                </div>
+                <button id="nextToPayment" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                    Lanjut ke Pembayaran
+                </button>
+            </div>
+            
+            <!-- Step 2: Metode Pembayaran -->
+            <div id="step2" class="step">
+                <h2 class="text-2xl font-bold mb-4">Metode Pembayaran</h2>
+                
+                <div class="payment-method">
+                    <div class="payment-option" onclick="selectPayment(this, 'bank_transfer')">
+                        <i class="fas fa-university"></i>
+                        <p>Transfer Bank</p>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this, 'credit_card')">
+                        <i class="fas fa-credit-card"></i>
+                        <p>Kartu Kredit</p>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this, 'ewallet')">
+                        <i class="fas fa-wallet"></i>
+                        <p>E-Wallet</p>
+                    </div>
+                </div>
+                
+                <div id="bankTransferFields" class="payment-fields">
+                    <div class="form-group">
+                        <label for="bankName">Nama Bank</label>
+                        <select id="bankName" class="mt-1">
+                            <option value="">Pilih Bank</option>
+                            <option value="bca">BCA</option>
+                            <option value="bni">BNI</option>
+                            <option value="mandiri">Mandiri</option>
+                            <option value="bri">BRI</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="creditCardFields" class="payment-fields" style="display:none">
+                    <div class="form-group">
+                        <label for="cardNumber">Nomor Kartu</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="expiryDate">Masa Berlaku</label>
+                            <input type="text" id="expiryDate" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="eWalletFields" class="payment-fields" style="display:none">
+                    <div class="form-group">
+                        <label for="eWalletType">Pilih E-Wallet</label>
+                        <select id="eWalletType" class="mt-1">
+                            <option value="">Pilih E-Wallet</option>
+                            <option value="gopay">GoPay</option>
+                            <option value="ovo">OVO</option>
+                            <option value="dana">DANA</option>
+                            <option value="linkaja">LinkAja</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between mt-6">
+                    <button id="backToSummary" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400">
+                        Kembali
+                    </button>
+                    <button id="payNowBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        Bayar Sekarang
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Bukti Pembayaran -->
+            <div id="step3" class="step">
+                <h2 class="text-2xl font-bold mb-4">Pembayaran Berhasil</h2>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 text-2xl mr-3"></i>
+                        <div>
+                            <p class="font-semibold">Pembayaran Berhasil Diproses</p>
+                            <p class="text-sm text-gray-600">ID Transaksi: <span id="transactionId">TRX-20231025-001</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-bold mb-2">Detail Tiket</h3>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <p class="text-gray-600">Rute:</p>
+                        <p>Jakarta - Bandung</p>
+                        <p class="text-gray-600">Tanggal:</p>
+                        <p>25 Oktober 2023</p>
+                        <p class="text-gray-600">Waktu:</p>
+                        <p>08:00 - 12:00</p>
+                        <p class="text-gray-600">Jumlah Kursi:</p>
+                        <p><span id="ticketSeats">1</span></p>
+                    </div>
+                    
+                    <svg id="barcode"></svg>
+                    
+                    <div class="mt-4 text-center text-sm text-gray-500">
+                        <p>Tunjukkan barcode ini saat boarding</p>
+                    </div>
+                </div>
+                
+                <button id="downloadTicketBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 mt-4">
+                    <i class="fas fa-download mr-2"></i>Unduh Bukti Tiket
+                </button>
+            </div>
+        </div>
+    </div>
+
+<!-- Footer -->
+<footer class="bg-blue-600 text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+        <p>&copy; 2023 TravelEase. All rights reserved.</p>
+        <div class="flex justify-center gap-3">
+
+            <p class="text-sm hover:underline"><a href=""><i class="fa-brands fa-youtube"></i> YouTube</a></p>
+            <p class="text-sm hover:underline"><a href=""><i class="fa-brands fa-tiktok"></i> Tiktok</a></p>
+            <p class="text-sm hover:underline"> <a href=""><i class="fa-brands fa-facebook-f"></i> Facebook</a></p>
+            <p class="text-sm hover:underline"> <a href=""><i class="fa-brands fa-linkedin"></i> Linkedin</a></p>
+        </div>
+    </div>
+</footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Fungsi untuk mengatur jumlah kursi dan total harga
+        const seatCountInput = document.getElementById('seatCount');
+        const totalPriceElement = document.getElementById('totalPrice');
+        const summarySeats = document.getElementById('summarySeats');
+        const summaryTotal = document.getElementById('summaryTotal');
+        const ticketSeats = document.getElementById('ticketSeats');
+        const pricePerSeat = 150000;
+
+        function decrementSeat() {
+            let currentValue = parseInt(seatCountInput.value);
+            if (currentValue > 1) {
+                seatCountInput.value = currentValue - 1;
+                updateTotalPrice();
+            }
+        }
+
+        function incrementSeat() {
+            let currentValue = parseInt(seatCountInput.value);
+            if (currentValue < 20) {
+                seatCountInput.value = currentValue + 1;
+                updateTotalPrice();
+            }
+        }
+
+        function updateTotalPrice() {
+            const seatCount = parseInt(seatCountInput.value);
+            const totalPrice = seatCount * pricePerSeat;
+            totalPriceElement.textContent = `Rp ${totalPrice.toLocaleString()}`;
+            summarySeats.textContent = seatCount;
+            summaryTotal.textContent = `Rp ${totalPrice.toLocaleString()}`;
+            ticketSeats.textContent = seatCount;
+        }
+
+        // Fungsi untuk modal pemesanan
+        const modal = document.getElementById("orderModal");
+        const orderBtn = document.getElementById("orderBtn");
+        const closeBtn = document.getElementsByClassName("close")[0];
+        
+        // Step navigation
+        const nextToPayment = document.getElementById("nextToPayment");
+        const backToSummary = document.getElementById("backToSummary");
+        const payNowBtn = document.getElementById("payNowBtn");
+        const downloadTicketBtn = document.getElementById("downloadTicketBtn");
+        
+        const step1 = document.getElementById("step1");
+        const step2 = document.getElementById("step2");
+        const step3 = document.getElementById("step3");
+        
+        const stepCircles = document.querySelectorAll(".step-circle");
+        
+        let currentStep = 1;
+        let selectedPaymentMethod = '';
+        let transactionId = '';
+
+        // Buka modal saat tombol Pesan Sekarang diklik
+        orderBtn.onclick = function() {
+            modal.style.display = "block";
+            currentStep = 1;
+            updateStepIndicator();
+        }
+
+        // Tutup modal saat tombol close diklik
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+            resetForm();
+        }
+
+        // Tutup modal saat klik di luar modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                resetForm();
+            }
+        }
+
+        // Navigasi antar step
+        nextToPayment.onclick = function() {
+            currentStep = 2;
+            updateStepIndicator();
+        }
+        
+        backToSummary.onclick = function() {
+            currentStep = 1;
+            updateStepIndicator();
+        }
+        
+        payNowBtn.onclick = function() {
+            if (!selectedPaymentMethod) {
+                alert('Silahkan pilih metode pembayaran terlebih dahulu');
+                return;
+            }
+            
+            // Proses pembayaran (simulasi)
+            processPayment();
+        }
+        
+        function updateStepIndicator() {
+            // Sembunyikan semua step
+            step1.classList.remove('active');
+            step2.classList.remove('active');
+            step3.classList.remove('active');
+            
+            // Tampilkan step aktif
+            if (currentStep === 1) {
+                step1.classList.add('active');
+            } else if (currentStep === 2) {
+                step2.classList.add('active');
+            } else if (currentStep === 3) {
+                step3.classList.add('active');
+            }
+            
+            // Update step indicator
+            stepCircles.forEach((circle, index) => {
+                if (index < currentStep) {
+                    circle.classList.add('active');
+                } else {
+                    circle.classList.remove('active');
+                }
+            });
+        }
+        
+        function selectPayment(element, method) {
+            // Hapus selected dari semua opsi
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Tambahkan selected ke opsi yang dipilih
+            element.classList.add('selected');
+            selectedPaymentMethod = method;
+            
+            // Tampilkan field yang sesuai
+            document.querySelectorAll('.payment-fields').forEach(field => {
+                field.style.display = 'none';
+            });
+            
+            if (method === 'bank_transfer') {
+                document.getElementById('bankTransferFields').style.display = 'block';
+            } else if (method === 'credit_card') {
+                document.getElementById('creditCardFields').style.display = 'block';
+            } else if (method === 'ewallet') {
+                document.getElementById('eWalletFields').style.display = 'block';
+            }
+        }
+        
+        function processPayment() {
+            // Generate transaction ID
+            const now = new Date();
+            const randomNum = Math.floor(Math.random() * 1000);
+            transactionId = `TRX-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}-${randomNum.toString().padStart(3, '0')}`;
+            
+            document.getElementById('transactionId').textContent = transactionId;
+            
+            // Generate barcode
+            generateBarcode(transactionId);
+            
+            // Lanjut ke step 3
+            currentStep = 3;
+            updateStepIndicator();
+        }
+        
+        function generateBarcode(data) {
+            JsBarcode("#barcode", data, {
+                format: "CODE128",
+                lineColor: "#000",
+                width: 2,
+                height: 50,
+                displayValue: true
+            });
+        }
+        
+        downloadTicketBtn.onclick = function() {
+            // Buat elemen canvas untuk menggabungkan semua informasi
+            const ticketContent = document.querySelector('#step3 > div.bg-white');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set ukuran canvas
+            canvas.width = ticketContent.offsetWidth + 40;
+            canvas.height = ticketContent.offsetHeight + 100;
+            
+            // Isi canvas dengan warna putih
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Tambahkan header
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(0, 0, canvas.width, 60);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Bukti Pemesanan BusTravel', canvas.width/2, 35);
+            
+            // Tambahkan konten tiket
+            ctx.fillStyle = '#000000';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            
+            // Gambar ulang konten tiket (simplified)
+            let yPos = 90;
+            
+            // Detail tiket
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Detail Tiket', 30, yPos);
+            yPos += 30;
+            
+            ctx.font = '14px Arial';
+            ctx.fillText(`Rute: Jakarta - Bandung`, 30, yPos);
+            yPos += 20;
+            ctx.fillText(`Tanggal: 25 Oktober 2023`, 30, yPos);
+            yPos += 20;
+            ctx.fillText(`Waktu: 08:00 - 12:00`, 30, yPos);
+            yPos += 20;
+            ctx.fillText(`Jumlah Kursi: ${seatCountInput.value}`, 30, yPos);
+            yPos += 30;
+            
+            // Barcode
+            const barcodeData = document.querySelector('#barcode').outerHTML;
+            const barcodeImg = new Image();
+            barcodeImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(barcodeData)));
+            
+            // Tunggu gambar barcode dimuat
+            barcodeImg.onload = function() {
+                ctx.drawImage(barcodeImg, 30, yPos, canvas.width - 60, 60);
+                yPos += 80;
+                
+                // Footer
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Tunjukkan barcode ini saat boarding', canvas.width/2, yPos);
+                
+                // Tambahkan ID Transaksi
+                yPos += 20;
+                ctx.fillText(`ID Transaksi: ${transactionId}`, canvas.width/2, yPos);
+                
+                // Buat link download
+                const link = document.createElement('a');
+                link.download = `tiket_bus_${transactionId}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            };
+        }
+        
+        function resetForm() {
+            currentStep = 1;
+            updateStepIndicator();
+            selectedPaymentMethod = '';
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.querySelectorAll('.payment-fields').forEach(field => {
+                field.style.display = 'none';
+            });
+        }
+
+        // Inisialisasi
+        updateTotalPrice();
+    </script>
+   <script>
+    // Mobile Menu Toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        
+        // Change icon between bars and times
+        const icon = mobileMenuButton.querySelector('i');
+        if (mobileMenu.classList.contains('hidden')) {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        } else {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        }
+    });
+</script>
+    
+</body>
+</html>

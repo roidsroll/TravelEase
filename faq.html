@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Page</title>
+    <link rel="icon" href="/images/logo-bus.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <nav class="bg-blue-600 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo/Ikon -->
+                <div class="flex items-center">
+                    <i class="fas fa-bus text-white text-2xl"></i>
+                    <span class="text-white text-xl font-semibold ml-2 md:mr-4">TravelEase</span>
+                </div>
+                
+                <!-- Desktop Navigation (hidden on mobile) -->
+                <div class="hidden md:flex space-x-6 text-lg font-medium py-7">
+                    <a href="index.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-house"></i> Home</a>
+                    <a href="order.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-ticket"></i> Order</a>
+                    <a href="faq.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-question"></i> FAQ</a>
+                    <a href="service.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-headset"></i> Bantuan/Services</a>
+                    <a href="game.html" class="px-6 py-3 bg-white text-indigo-600 rounded-b-lg font-medium hover:bg-indigo-300 transition duration-300"><i class="fa-solid fa-gamepad"></i> Game</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu (hidden by default) -->
+            <div id="mobile-menu" class="md:hidden hidden bg-blue-700 mt-2 pb-2">
+                <a href="index.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="order.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-ticket"></i> Order</a>
+                <a href="faq.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-question"></i> FAQ</a>
+                <a href="service.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-headset"></i> Bantuan/Services</a>
+                <a href="game.html" class="block py-2 px-4 text-white hover:bg-blue-800 transition"><i class="fa-solid fa-gamepad"></i> Game</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <div class="container mx-auto px-4 py-8 max-w-4xl">
+            <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">Frequently Asked Questions</h1>
+            
+            <!-- Add FAQ Button (Triggers Password Modal) -->
+            <div class="text-right mb-6">
+                <button id="addFaqBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition">
+                    + Add New FAQ
+                </button>
+            </div>
+            
+            <!-- FAQ List -->
+            <div id="faqContainer" class="space-y-4">
+                <!-- Default FAQs -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="faq-question p-4 cursor-pointer border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-semibold text-lg">What is your return policy?</h3>
+                        <span class="text-xl">+</span>
+                    </div>
+                    <div class="faq-answer p-4 hidden">
+                        <p class="text-gray-700">We offer a 30-day return policy for all unused products with original packaging. Please contact our support team to initiate a return.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="faq-question p-4 cursor-pointer border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-semibold text-lg">How can I track my order?</h3>
+                        <span class="text-xl">+</span>
+                    </div>
+                    <div class="faq-answer p-4 hidden">
+                        <p class="text-gray-700">Once your order is shipped, you'll receive a tracking number via email. You can use this number on our website or the carrier's website to track your package.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Password Modal (Hidden by default) -->
+    <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Enter Admin Password</h2>
+            <p class="text-gray-600 mb-4">Please enter the admin password to add a new FAQ.</p>
+            <input type="password" id="passwordInput" class="w-full p-3 border border-gray-300 rounded-lg mb-4" placeholder="Enter password">
+            <div class="flex justify-end space-x-3">
+                <button id="cancelBtn" class="px-4 py-2 border border-gray-300 rounded-lg">Cancel</button>
+                <button id="submitPasswordBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add FAQ Modal (Hidden by default) -->
+    <div id="addFaqModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Add New FAQ</h2>
+            <div class="mb-4">
+                <label for="faqQuestion" class="block text-gray-700 mb-2">Question</label>
+                <input type="text" id="faqQuestion" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Enter question">
+            </div>
+            <div class="mb-4">
+                <label for="faqAnswer" class="block text-gray-700 mb-2">Answer</label>
+                <textarea id="faqAnswer" class="w-full p-3 border border-gray-300 rounded-lg" rows="4" placeholder="Enter answer"></textarea>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button id="cancelAddBtn" class="px-4 py-2 border border-gray-300 rounded-lg">Cancel</button>
+                <button id="submitFaqBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Add FAQ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+        <!-- Footer -->
+        <footer class="bg-blue-600 text-white py-6">
+            <div class="container mx-auto px-4 text-center">
+                <p class="mb-3">&copy; 2023 TravelEase. All rights reserved.</p>
+                <div class="flex justify-center gap-3 flex-wrap">
+                    <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-youtube mr-1"></i> YouTube</a>
+                    <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-tiktok mr-1"></i> Tiktok</a>
+                    <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-facebook-f mr-1"></i> Facebook</a>
+                    <a href="#" class="text-sm hover:underline"><i class="fa-brands fa-linkedin mr-1"></i> Linkedin</a>
+                </div>
+            </div>
+        </footer>
+
+    <script>
+        // Password is set to "admin123" (you can change this)
+        const ADMIN_PASSWORD = "roi";
+        
+        // DOM Elements
+        const addFaqBtn = document.getElementById('addFaqBtn');
+        const passwordModal = document.getElementById('passwordModal');
+        const addFaqModal = document.getElementById('addFaqModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitPasswordBtn = document.getElementById('submitPasswordBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const cancelAddBtn = document.getElementById('cancelAddBtn');
+        const submitFaqBtn = document.getElementById('submitFaqBtn');
+        const faqQuestion = document.getElementById('faqQuestion');
+        const faqAnswer = document.getElementById('faqAnswer');
+        const faqContainer = document.getElementById('faqContainer');
+        
+        // Toggle FAQ answers
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('span');
+                
+                answer.classList.toggle('hidden');
+                icon.textContent = answer.classList.contains('hidden') ? '+' : '-';
+            });
+        });
+        
+        // Show password modal when Add FAQ button is clicked
+        addFaqBtn.addEventListener('click', () => {
+            passwordModal.classList.remove('hidden');
+            passwordInput.focus();
+        });
+        
+        // Hide password modal when Cancel is clicked
+        cancelBtn.addEventListener('click', () => {
+            passwordModal.classList.add('hidden');
+            passwordInput.value = '';
+        });
+        
+        // Hide add FAQ modal when Cancel is clicked
+        cancelAddBtn.addEventListener('click', () => {
+            addFaqModal.classList.add('hidden');
+            faqQuestion.value = '';
+            faqAnswer.value = '';
+        });
+        
+        // Validate password
+        submitPasswordBtn.addEventListener('click', () => {
+            if (passwordInput.value === ADMIN_PASSWORD) {
+                passwordModal.classList.add('hidden');
+                addFaqModal.classList.remove('hidden');
+                faqQuestion.focus();
+                passwordInput.value = '';
+            } else {
+                alert('Incorrect password! Please try again.');
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        });
+        
+        // Add new FAQ
+        submitFaqBtn.addEventListener('click', () => {
+            const question = faqQuestion.value.trim();
+            const answer = faqAnswer.value.trim();
+            
+            if (!question || !answer) {
+                alert('Please enter both question and answer.');
+                return;
+            }
+            
+            // Create new FAQ element
+            const faqElement = document.createElement('div');
+            faqElement.className = 'bg-white rounded-lg shadow-md overflow-hidden';
+            faqElement.innerHTML = `
+                <div class="faq-question p-4 cursor-pointer border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="font-semibold text-lg">${question}</h3>
+                    <span class="text-xl">+</span>
+                </div>
+                <div class="faq-answer p-4 hidden">
+                    <p class="text-gray-700">${answer}</p>
+                </div>
+            `;
+            
+            // Add to container
+            faqContainer.prepend(faqElement);
+            
+            // Add click event to new FAQ
+            const newQuestion = faqElement.querySelector('.faq-question');
+            newQuestion.addEventListener('click', () => {
+                const answer = newQuestion.nextElementSibling;
+                const icon = newQuestion.querySelector('span');
+                
+                answer.classList.toggle('hidden');
+                icon.textContent = answer.classList.contains('hidden') ? '+' : '-';
+            });
+            
+            // Reset and close modal
+            faqQuestion.value = '';
+            faqAnswer.value = '';
+            addFaqModal.classList.add('hidden');
+        });
+        
+        // Allow submitting with Enter key in password input
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitPasswordBtn.click();
+            }
+        });
+    </script>
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            
+            // Change icon between bars and times
+            const icon = mobileMenuButton.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+    </script>
+</body>
+</html>
